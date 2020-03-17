@@ -7,6 +7,12 @@ import java.net.URL;
  * 
  * 把多个classLoader封装在一个classLoaderWrapper里，就像操作一个classLoader一样
  * 
+ * 
+ * 获取ClassLoader 三种方式
+ * 1.ClassLoader.getSystemClassLoader();              使用系统ClassLoader，即系统的入口点所使用的ClassLoader。
+ * 2.this.getClass().getClassLoader();                使用当前类的ClassLoader
+ * 3.Thread.currentThread().getContextClassLoader();  使用当前线程的ClassLoader
+ * 
  * @author ethan
  *
  */
