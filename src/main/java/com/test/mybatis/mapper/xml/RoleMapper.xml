@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.mybatis.mapper.RoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.test.mybatis.mapper.Role">
+        <id column="id" property="id" />
+        <result column="role_code" property="roleCode" />
+        <result column="role_name" property="roleName" />
+        <result column="role_desc" property="roleDesc" />
+        <result column="role_sort" property="roleSort" />
+        <result column="update_time" property="updateTime" />
+        <result column="updater"   property="updater" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, role_code, role_name, role_desc, role_sort, update_time, updater
+    </sql>
+
+    <select id="getRoleById" resultType="com.test.mybatis.mapper.Role">
+        select <include refid="Base_Column_List" />
+        from t_role
+        where id = #{id}
+    </select>
+
+</mapper>
