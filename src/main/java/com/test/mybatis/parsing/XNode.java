@@ -11,6 +11,15 @@ import org.w3c.dom.CharacterData;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * 
+ * xml配置文件单个节点， 例如<property name="dbdriver"   value="com.mysql.jdbc.Driver"/>
+ * 若想获取name的 getStringAttribute("name") 
+ * 同理获取value的值 getStringAttribute("value")
+ * 
+ * @author ethan
+ *
+ */
 public class XNode {
 	private Node node;
 	private String name;

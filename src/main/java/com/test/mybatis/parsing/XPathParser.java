@@ -25,6 +25,12 @@ import org.xml.sax.SAXParseException;
 
 import com.test.mybatis.builder.BuilderException;
 
+/**
+ * 负责具体dom树的节点解析工作
+ * 
+ * @author ethan
+ *
+ */
 public class XPathParser {
 	//内存中的dom树
 	private Document document;

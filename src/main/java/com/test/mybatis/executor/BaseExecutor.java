@@ -28,19 +28,38 @@ import com.test.mybatis.transaction.Transaction;
 import com.test.mybatis.type.TypeHandlerRegistry;
 import static com.test.mybatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOLDER;
 
+/**
+ * Executor 的实现类，提供了一些骨架实现方法，从而使子类只要实现部分抽象方法就可以了
+ * 
+ * @author ethan
+ *
+ */
 public abstract class BaseExecutor implements Executor {
 
 	private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
+	//事务对象
 	protected Transaction transaction;
+	
+	//包装的Executor对象
 	protected Executor wrapper;
 
+	//延迟加载队列
 	protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
+	
+	//本地缓存，即一级缓存
 	protected PerpetualCache localCache;
+	
+	//本地输出类型的参数的缓存
 	protected PerpetualCache localOutputParameterCache;
+	
+	//配置类
 	protected Configuration configuration;
 
+	//记录嵌套查询的层级
 	protected int queryStack;
+	
+	//是否关闭
 	private boolean closed;
 
 	protected BaseExecutor(Configuration configuration, Transaction transaction) {
