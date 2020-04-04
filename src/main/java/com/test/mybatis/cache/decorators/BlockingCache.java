@@ -8,11 +8,31 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.test.mybatis.cache.Cache;
 import com.test.mybatis.cache.CacheException;
 
-
+/**
+ * 
+ * 阻塞版缓存器，保证只有一个线程到数据库查找指定key对应的数据
+ * 
+ * @author ethan
+ *
+ */
 public class BlockingCache implements Cache {
 
+	/**
+	 * 阻塞超时时长
+	 * 
+	 */
 	private long timeout;
+	
+	/**
+	 * Cache对象
+	 * 
+	 */
 	private final Cache delegate;
+	
+	/**
+	 * 每个key都对应一个ReentrantLock对象
+	 * 
+	 */
 	private final ConcurrentHashMap<Object, ReentrantLock> locks;
 
 	public BlockingCache(Cache delegate) {
@@ -39,11 +59,17 @@ public class BlockingCache implements Cache {
 		}
 	}
 
+	/**
+	 * 
+	 * 假设线程A在BlockingCache中未找到KeyA对应的缓存项时，线程A会获取keyA对应的锁，
+	 * 后续线程在查找keyA时会发生阻塞
+	 * 
+	 */
 	@Override
 	public Object getObject(Object key) {
-		acquireLock(key);
-		Object value = delegate.getObject(key);
-		if (value != null) {
+		acquireLock(key);//获取key对应的锁
+		Object value = delegate.getObject(key);//查询key
+		if (value != null) {//缓存有key对应的缓存项	，释放锁，否则继续持有锁
 			releaseLock(key);
 		}
 		return value;
@@ -65,23 +91,36 @@ public class BlockingCache implements Cache {
 		return locks.computeIfAbsent(key, k -> new ReentrantLock());
 	}
 
+	/**
+	 * 
+	 * 获取指定key对应的锁，如果该key没有对应的锁对象则创建新的ReentrantLock对象，再加锁，
+	 * 如果获取锁失败，则阻塞一段时间
+	 * 
+	 * @param key
+	 */
 	private void acquireLock(Object key) {
-		Lock lock = getLockForKey(key);
-		if (timeout > 0) {
+		Lock lock = getLockForKey(key);//获取ReentrantLock对象
+		if (timeout > 0) {//获取锁，带超时时长
 			try {
 				boolean acquired = lock.tryLock(timeout, TimeUnit.MILLISECONDS);
-				if (!acquired) {
+				if (!acquired) {// 超时，抛出异常
 					throw new CacheException("Couldn't get a lock in " + timeout + " for the key " + key
 							+ " at the cache " + delegate.getId());
 				}
 			} catch (InterruptedException e) {
 				throw new CacheException("Got interrupted while trying to acquire lock for key " + key, e);
 			}
-		} else {
+		} else {//获取锁，不带超时时长
 			lock.lock();
 		}
 	}
 
+	/**
+	 * 
+	 * 释放锁
+	 * 
+	 * @param key
+	 */
 	private void releaseLock(Object key) {
 		ReentrantLock lock = locks.get(key);
 		if (lock.isHeldByCurrentThread()) {

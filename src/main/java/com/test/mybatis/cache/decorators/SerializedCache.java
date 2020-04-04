@@ -13,7 +13,6 @@ import com.test.mybatis.cache.Cache;
 import com.test.mybatis.cache.CacheException;
 import com.test.mybatis.io.Resources;
 
-
 public class SerializedCache implements Cache {
 
 	private final Cache delegate;

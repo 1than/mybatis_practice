@@ -7,6 +7,13 @@ import java.util.concurrent.locks.ReadWriteLock;
 import com.test.mybatis.cache.Cache;
 import com.test.mybatis.cache.CacheException;
 
+/**
+ * 
+ * Cache接口的实现类，但大部分都是装饰器，只有PerpetualCache提供了Cache的基本实现
+ * 
+ * @author ethan
+ *
+ */
 public class PerpetualCache implements Cache {
 	
 	private String id;
