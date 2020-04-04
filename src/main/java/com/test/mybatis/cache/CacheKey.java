@@ -11,7 +11,7 @@ import com.test.mybatis.reflection.ArrayUtil;
  * 
  *   唯一确定一个缓存项的key，mybatis因为涉及动态sql等多方面的因素，其缓存项key不能仅仅通过一个string表示，所以mybatis
  *   提供了CacheKey类来表示缓存项的key，在一个CacheKey对象中可以封装多个印象缓存项的因素。
- *   CacheKey中可以添加多个对象，由于这些对象共同确定两个CacheKey对象是否相同。
+ *   CacheKey中可以添加多个对象，由于这些对象共同确定两个个CacheKey对象是否相同。
  *   
  *   以下四个部分构成CacheKey对象，也就是说以下四部分会记录到该CacheKey对象的updateList集合中
  *   1.MappedStatement id
@@ -118,27 +118,42 @@ public class CacheKey implements Cloneable, Serializable {
 		}
 	}
 
+	/**
+	 * 
+	 * 因为缓存中的key不再是简单的string，所以判断两个key是否相同从简单的string是否相同变成两个CachekKey对象是否相同
+	 * 因此必须重新equals，引入新的对象相等规则来判断两个缓存的key(对象)是否相同
+	 * 
+	 */
 	@Override
 	public boolean equals(Object object) {
+		
+		//是否是同一个对象
 		if (this == object) {
 			return true;
 		}
+		
+		//类型是否相同
 		if (!(object instanceof CacheKey)) {
 			return false;
 		}
 
 		final CacheKey cacheKey = (CacheKey) object;
 
+		//hashcode 必须相同
 		if (hashcode != cacheKey.hashcode) {
 			return false;
 		}
+		//checksum 必须相同
 		if (checksum != cacheKey.checksum) {
 			return false;
 		}
+		
+		//count 必须相同
 		if (count != cacheKey.count) {
 			return false;
 		}
 
+		//updateList 中的每一个元素必须相同
 		for (int i = 0; i < updateList.size(); i++) {
 			Object thisObject = updateList.get(i);
 			Object thatObject = cacheKey.updateList.get(i);
