@@ -10,7 +10,7 @@ import com.test.mybatis.cache.CacheException;
 
 /**
  * 
- * 阻塞版缓存器，保证只有一个线程到数据库查找指定key对应的数据
+ * 阻塞版缓存器，保证只有一个线程到数据库查找指定key对应的数据(对key读锁)
  * 
  * @author ethan
  *
@@ -30,7 +30,7 @@ public class BlockingCache implements Cache {
 	private final Cache delegate;
 	
 	/**
-	 * 每个key都对应一个ReentrantLock对象
+	 * 每个key都对应一个ReentrantLock对象,用ConcurrentHashMap来管理key，同时对key加锁
 	 * 
 	 */
 	private final ConcurrentHashMap<Object, ReentrantLock> locks;
@@ -62,7 +62,7 @@ public class BlockingCache implements Cache {
 	/**
 	 * 
 	 * 假设线程A在BlockingCache中未找到KeyA对应的缓存项时，线程A会获取keyA对应的锁，
-	 * 后续线程在查找keyA时会发生阻塞
+	 * 后续线程在查找keyA时会发生阻塞，读锁
 	 * 
 	 */
 	@Override

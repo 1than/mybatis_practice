@@ -38,6 +38,17 @@ public class CacheKey implements Cloneable, Serializable {
 		}
 	};
 
+	/**
+	 * 
+	 * 以下两个默认值的取值解释：
+	 * 
+	 * 17是质子数中一个"不大不小"的存在，如果使用的是一个如2的较小的质数，
+	 * 那么得出的乘积会在一个很小的范围内，很容易造成哈希值的冲突，如果选择一个100以上
+	 * 的质数，得出的哈希值会超出int的最大范围，这两种都不合适，而如果对超过
+	 * 5000个英文单词进行hashcode运算，并使用31，33，37，39和41作为乘子，每个常数算出的
+	 * hash值冲突数都小于7个，因此选用了17，37作为备选乘数
+	 * 
+	 */
 	private static final int DEFAULT_MULTIPLIER = 37;
 	private static final int DEFAULT_HASHCODE = 17;
 

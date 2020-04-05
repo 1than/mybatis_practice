@@ -38,7 +38,7 @@ public class LruCache implements Cache {
 
 	public LruCache(Cache delegate) {
 		this.delegate = delegate;
-		setSize(1024);// 默认缓存大小是1024
+		setSize(2);// 默认缓存大小是1024
 	}
 
 	@Override
@@ -59,6 +59,7 @@ public class LruCache implements Cache {
 			//当调用LinkedHashMap.put()方法时，会调用该方法
 			@Override
 			protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
+				System.out.println(eldest.getKey() + " --- " + eldest.getValue());
 				boolean tooBig = size() > size;
 				if (tooBig) {//如果已经达到缓存上限，则更新eldestKey字段，后面会删除该项
 					eldestKey = eldest.getKey();
@@ -76,7 +77,7 @@ public class LruCache implements Cache {
 
 	@Override
 	public Object getObject(Object key) {
-		keyMap.get(key); // touch
+		keyMap.get(key); // 该key被访问过之后会被放在链表的后面
 		return delegate.getObject(key);
 	}
 
